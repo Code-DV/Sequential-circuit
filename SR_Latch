@@ -1,0 +1,58 @@
+module SR_latch (
+    input  wire s, r, control,
+    output reg  q,
+    output wire qb
+);
+
+    assign qb = ~q; // continuous assignment for complement
+
+    always @(*) begin
+        if (control) begin
+            case ({s,r})
+                2'b10: q = 1;    // Set
+                2'b01: q = 0;    // Reset
+                2'b00: q = q;    // Hold
+                2'b11: q = 1'bx; // Invalid
+            endcase
+        end
+        // else: q holds previous value
+    end
+
+endmodule
+
+/////////////////////tb////////////////////////////////////
+module tb_SR;
+
+	// Inputs
+	reg s;
+	reg r;
+   reg control;
+	// Outputs
+	wire q;
+	wire qb;
+	
+   integer i;
+	// Instantiate the Unit Under Test (UUT)
+	SR_latch uut (
+		.s(s), 
+		.r(r),
+      .control(control),		
+		.q(q), 
+		.qb(qb)
+	);
+
+    initial
+	   begin
+		  {control,s,r}=0;
+		end
+	initial begin
+	    $monitor("%0t\t%b %b %b | q=%b   qb=%b", $time, control,s, r, q, qb);
+		 			  
+       control =1;
+		 for(i=0; i<4; i=i+1)
+		   begin
+			  {s,r}=i;
+			  #10;
+	end
+      end
+endmodule
