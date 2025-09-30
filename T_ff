@@ -1,0 +1,66 @@
+//////////////////////////T_FF///////////////////////////////////////
+
+module T_ff(
+    input T,clk,rst,
+    output reg q,qb
+    );
+
+
+   always @(posedge clk)
+	   begin
+		  if(rst)
+		    q <= 2'b0;
+			  else if(T)
+			     q <= ~q;
+				   else
+					  q <= q;
+		end			  
+endmodule
+////////////////////////////////////TB///////////////////////////
+module tb_t_ff;
+
+	// Inputs
+	reg T;
+	reg clk;
+	reg rst;
+
+	// Outputs
+	wire q;
+	wire qb;
+
+	// Instantiate the Unit Under Test (UUT)
+	T_ff uut (
+		.T(T), 
+		.clk(clk), 
+		.rst(rst), 
+		.q(q), 
+		.qb(qb)
+	);
+
+   always #10 clk = ~clk;
+	
+	initial begin
+		{T,clk,rst} =0;
+	end
+      
+	task reset;
+	  begin
+       @(negedge clk)
+       rst=1;
+       @(negedge clk)
+		 rst =0;
+     end	
+   endtask	
+
+   initial
+      begin
+         $monitor("rst = %b | T = %b | q = %b | qb = %b" ,rst,T,q,qb);
+
+         reset;
+         T=1; #15;
+			T=0; #15;
+			T=1; #15;
+			T=1; #15;
+			T=0; #20;
+   end			
+endmodule
