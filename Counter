@@ -1,0 +1,65 @@
+module counter(
+    input count,clk,rst,
+    output reg [3:0] q,
+	 output [3:0]qb
+    );
+
+   assign qb = ~q;   
+   always @(posedge clk)
+	    begin
+		   if(rst)
+			   q <= 4'b0000;
+				else if(count)
+				   q <= q+1;
+					else
+					  q <= q;
+		 end	 	
+endmodule
+
+///////////////////////////////TB////////////////////////////
+
+module tb_counter;
+
+	// Inputs
+	reg count;
+	reg clk;
+	reg rst;
+
+	// Outputs
+	wire [3:0]q;
+	wire [3:0]qb;
+
+	// Instantiate the Unit Under Test (UUT)
+	counter uut (
+		.count(count), 
+		.clk(clk), 
+		.rst(rst), 
+		.q(q), 
+		.qb(qb)
+	);
+
+   always #10 clk = ~clk;
+	initial begin
+		// Initialize Inputs
+		count = 0;
+		clk = 0;
+		rst = 0;
+		#10;
+  	end
+	
+	task rest;
+	  begin
+	    @(negedge clk)
+		  rst =1;
+		 @(negedge clk)
+         rst =0;
+	  end
+   endtask
+	
+   initial begin
+     $monitor ("rst =%b | count =%b | q =%b",rst,count,q);	
+	   rest;
+   //  count = 0; #20;	  
+	  count = 1; #20;
+	 end  
+endmodule
