@@ -1,0 +1,70 @@
+module JK_ff(
+    input j,k,clk,rst,
+    output reg q,
+	 output qb
+    );
+
+ assign qb = ~q;
+ always @(posedge clk)
+    begin
+	   if(rst)
+		  q <= 1'b0;
+		  else if(j==0 & k==0)
+		    q <= q;
+			  else if(j==0 & k==1)
+			    q <= 1'b0;
+				  else if(j==1 & k==0)
+				    q <=1'b1;
+					  else if(j==1 & k==1)
+					   q <= ~q;				    
+		  end 
+    		  
+endmodule
+
+////////////////////////////////tb///////////////////////
+module tb_JK_ff;
+
+	// Inputs
+	reg j;
+	reg k;
+	reg clk;
+	reg rst;
+
+	// Outputs
+	wire q;
+	wire qb;
+
+	// Instantiate the Unit Under Test (UUT)
+	JK_ff uut (
+		.j(j), 
+		.k(k), 
+		.clk(clk), 
+		.rst(rst), 
+		.q(q), 
+		.qb(qb)
+	);
+
+   always #10 clk = ~clk;
+	initial begin
+		{j,k,rst,clk}=0;
+	end
+      
+	task reset;
+     begin
+		 @(negedge clk)
+		 rst =1;
+		 @(negedge clk)
+		 rst =0;
+	 end	 
+	endtask
+	
+	initial begin
+	  $monitor ("J =%b | K =%b | q =%b",j,k,q);
+	  reset;
+	  j=0; k=0; #15;
+	  j=0; k=1; #18;
+	  j=1; k=0; #20;
+	  j=1; k=1; #25;
+  	end
+		
+endmodule
