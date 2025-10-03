@@ -1,0 +1,130 @@
+//////////////////////MOD_5 70%_duty_cycle////////////////////////////////
+/*module mod_5(input rst,clk,
+             output clk_out,
+				 output  reg[2:0]count);
+				 
+	 reg w1,w2;
+	 
+    /// 70% duty cycle///////////////
+   always @(posedge clk)
+	  begin
+	    if(rst) begin
+		    count <= 3'b0;
+			end 
+			 else if(count == 4)
+			     count <=  3'b0;
+				  else begin
+				    count <= count +1;	
+					end 
+	end	
+
+    always @(posedge clk)
+      begin
+			if(rst)
+			  w1 <= 0;
+			   else
+				  w1 <= count[1];
+			end	  
+  
+  always @(negedge clk)
+      begin
+			if(rst)
+			  w2<= 0;
+			   else
+				  w2<= w1;
+			end	  
+	
+  assign clk_out = w2 | count[1];
+  
+endmodule */
+
+//////////////////////TB_MOD_5 70%_duty_cycle////////////////////////////////
+/*module tb_mod_5_70;
+
+    // Inputs
+    reg rst;
+    reg clk;
+
+    // Outputs
+    wire clk_out;
+    wire [2:0] count;
+
+    // Instantiate UUT
+    mod_5 uut (
+        .rst(rst), 
+        .clk(clk), 
+        .clk_out(clk_out), 
+        .count(count)
+    );
+
+    // Clock generator (20 ns period)
+    initial begin
+        clk = 0;
+        forever #10 clk = ~clk;
+    end  
+
+    // Reset logic
+    initial begin
+        rst = 1;
+        #25 rst = 0; 
+		  // hold reset for ~1.25 cycles
+		   rst=0;
+    end
+
+endmodule*/
+
+//////////////////////MOD_5 50%_duty_cycle////////////////////////////////
+module mod_5(input clk,rst,output clk_out,output reg [2:0]count);
+  reg w1;
+  always @(posedge clk) begin
+     if(rst)
+		  count <= 0;
+         else if(count == 4) 		  
+           count <= 3'b0;
+				else
+				  count <= count + 1;
+		end
+		
+		always @(negedge clk) begin
+		   if(rst)
+			    w1 <= 0;
+			    else
+				    w1 <= count[1];
+			end
+   assign clk_out = w1 | count[1];			
+ endmodule				
+
+//////////////////////TB_MOD_5 50%_duty_cycle////////////////////////////////
+module tb_mod_5_50;
+
+    // Inputs
+    reg rst;
+    reg clk;
+
+    // Outputs
+    wire clk_out;
+    wire [2:0] count;
+
+    // Instantiate UUT
+    mod_5 uut (
+        .rst(rst), 
+        .clk(clk), 
+        .clk_out(clk_out), 
+        .count(count)
+    );
+
+    // Clock generator (20 ns period)
+    initial begin
+        clk = 0;
+        forever #10 clk = ~clk;
+    end  
+
+    // Reset logic
+    initial begin
+        rst = 1;
+        #25 rst = 0; 
+		  // hold reset for ~1.25 cycles
+		   rst=0;
+    end
+
+endmodule
