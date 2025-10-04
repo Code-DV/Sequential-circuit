@@ -1,0 +1,72 @@
+////////////////////////////PISO//////////////////////
+
+module PISO(
+    input clk,rst,
+    input [3:0] din ,
+	 input load,
+    output dout
+    );
+
+   reg [3:0]temp;
+	
+	always @(posedge clk)
+	  begin
+	    if(rst)
+		   temp <= 4'b0;
+			 else if (load)
+            temp <= din;
+				
+			  else
+					temp <= temp >> 1;
+		
+	end		
+    assign dout = temp[0];			
+endmodule
+
+/////////////////////Tb/////////////////////////
+
+module TB_PISO;
+
+	// Inputs
+	reg clk;
+	reg rst;
+	reg [3:0] din;
+	 reg load;
+	 wire dout;
+
+	// Instantiate the Unit Under Test (UUT)
+	PISO uut (
+		.clk(clk), 
+		.rst(rst), 
+		.din(din), 
+		.dout(dout),
+		.load(load)
+	);
+
+   initial begin
+	  forever #10 clk = ~clk;
+	end
+	
+	initial begin
+		// Initialize Inputs
+		clk = 0;
+		rst = 0;
+		din = 0;
+		load=0;
+		#100;
+	end
+      
+	initial begin
+     @(negedge clk)
+		rst = 1;
+		@(negedge clk)
+		rst =0;
+		@(negedge clk)
+		load=1;
+		din = 4'b1010;
+		@(negedge clk)
+		load=0;
+		
+		
+	end	
+endmodule
