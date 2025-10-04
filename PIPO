@@ -1,0 +1,71 @@
+/////////////////////PIPO/////////////////////////
+module PIPO(
+    input rst,clk,load,
+    input [3:0] din,
+    output [3:0] dout
+    );
+      reg [3:0]temp;
+		
+   always @(posedge clk)
+	  begin
+	   if(rst)
+		   temp <= 4'b0;
+			  else if(load)
+			    temp <= din;
+				  
+				end	
+   assign dout = temp;				
+endmodule
+
+////////////////TB/////////////////////////
+
+module TB_PIPO;
+
+	// Inputs
+	reg rst;
+	reg clk;
+	reg load;
+	reg [3:0] din;
+
+	// Outputs
+	wire [3:0] dout;
+
+	// Instantiate the Unit Under Test (UUT)
+	PIPO uut (
+		.rst(rst), 
+		.clk(clk), 
+		.load(load), 
+		.din(din), 
+		.dout(dout)
+	);
+	
+	 initial begin
+	    forever #10 clk = ~clk;
+		 end
+
+	initial begin
+		// Initialize Inputs
+		rst = 0;
+		clk = 0;
+		load = 0;
+		din = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+
+	end
+      initial begin
+		   @(negedge clk)
+			 rst = 1;
+			 @(negedge clk)
+			 rst = 0;
+			 @(negedge clk)
+			 load = 1;
+			 din = 4'b1010;
+			 @(negedge clk)
+			 load = 0;
+			 
+			end 
+endmodule
