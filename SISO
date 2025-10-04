@@ -1,0 +1,77 @@
+///////////////////////////SISO/////////////////////
+module SISO(
+    input rst,clk,din,
+    output dout
+    );
+   reg [3:0] temp;
+	
+/*	always @(posedge clk)
+	  begin
+	    if(rst)
+		    temp <= 4'b0;
+			 else
+            begin
+				  temp <= {din,temp[3:1]};
+				 end
+		end	*/
+
+  always @(posedge clk)
+      begin
+			if(rst)
+			  temp = 4'b0;
+			   else
+				  begin
+				    temp[3] = din;
+					 temp =temp >> 1;
+				end
+     end				
+	assign dout = temp[0];			 
+endmodule
+
+///////////////////////Tb////////////////////////////
+
+module TB_SISO;
+
+	// Inputs
+	reg rst;
+	reg clk;
+	reg din;
+
+	// Outputs
+	wire dout;
+
+	// Instantiate the Unit Under Test (UUT)
+	SISO uut (
+		.rst(rst), 
+		.clk(clk), 
+		.din(din), 
+		.dout(dout)
+	);
+
+   initial begin
+	   forever #10 clk = ~clk;
+	end
+	
+	initial begin
+		// Initialize Inputs
+		rst = 0;
+		clk = 0;
+		din = 0;
+		#100;
+
+	end
+	
+	initial begin
+	    @(negedge clk)
+		  rst =1;
+		  @(negedge clk)
+		  rst =0;
+      
+		  din = 1'b1; #20;
+		   din = 1'b1; #20;
+			 din = 1'b0; #20; 
+			  din = 1'b1; #20;
+			//	din = 1'b1; #20;
+		  
+		end  
+endmodule
