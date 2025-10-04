@@ -1,0 +1,72 @@
+module SIPO(
+    input rst, clk, din,
+    output [3:0] dout
+);
+  reg [3:0] temp;
+  
+  always @(posedge clk)
+    begin
+	   if (rst)
+		   temp <= 4'b0;                
+		else begin
+		   temp <= temp >> 1;
+		   temp[3] <= din;               
+		               
+		end
+    end
+
+ assign dout = temp[3:0];	  
+
+endmodule
+
+//////////////////////////////////TB//////////////////////
+module TB_SIPO;
+
+	// Inputs
+	reg rst;
+	reg clk;
+	reg din;
+
+	// Outputs
+	wire [3:0] dout;
+
+	// Instantiate the Unit Under Test (UUT)
+	SIPO uut (
+		.rst(rst), 
+		.clk(clk), 
+		.din(din), 
+		.dout(dout)
+	);
+
+    initial begin
+	   forever #10 clk = ~clk;
+	end
+	
+	initial begin
+		// Initialize Inputs
+		rst = 0;
+		clk = 0;
+		din = 0;
+
+		// Wait 100 ns for global reset to finish
+		#10;
+        
+		// Add stimulus here
+
+	end
+      
+			initial begin
+	    @(negedge clk)
+		  rst =1;
+		  @(negedge clk)
+		  rst =0;	
+		  din = 1'b1; 
+		  @(negedge clk)	
+		  din = 1'b1; 
+        @(negedge clk)	
+		  din = 1'b0; 
+        @(negedge clk)	
+		  din = 1'b1; 		  
+		  
+		end  
+endmodule
